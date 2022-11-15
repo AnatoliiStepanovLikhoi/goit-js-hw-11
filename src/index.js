@@ -132,7 +132,7 @@ async function onLoadMore(event) {
             behavior: "smooth",
         });
 
-        if (reqiuiredPhotoQty > response.data.hits.length) {
+        if (reqiuiredPhotoQty > photos.length) {
             Notify.failure("Sorry, there are no more images matching your search query. Please try another request.");
             removeVisuallyHidden(refs.endlist)
         }
@@ -176,9 +176,22 @@ window.addEventListener('scroll', async () => {
     // if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
     //     // console.log('you are on the bottom');
     // }
-    const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+    // const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
 
-    if (scrollTop === scrollHeight - clientHeight) {
+    // console.log(scrollHeight - clientHeight);
+    // console.log(scrollTop);
+    // console.log(clientHeight);
+
+    // if (scrollTop === scrollHeight - clientHeight) {
+    //     console.log('last image');
+    //     await onLoadMore();
+    // }
+
+    console.log(window.innerHeight + window.scrollY);
+    console.log(document.body.offsetHeight);
+    // console.log(clientHeight);
+
+    if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
         console.log('last image');
         await onLoadMore();
     }
