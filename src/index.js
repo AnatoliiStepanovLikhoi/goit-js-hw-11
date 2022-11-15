@@ -120,11 +120,17 @@ function addGalleryMarkup(dataArray) {
 
 async function onLoadMore(event) {
     try {
+        const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
         const response = await fetchPhoto(requstedValue, pageNumber);
         pageNumber += 1
         const photos = await response.data.hits;
 
-        addGalleryMarkup(photos)
+        addGalleryMarkup(photos);
+
+        window.scrollBy({
+            top: cardHeight * 2,
+            behavior: "smooth",
+        });
 
         if (reqiuiredPhotoQty > response.data.hits.length) {
             Notify.failure("Sorry, there are no more images matching your search query. Please try another request.");
