@@ -70,7 +70,7 @@ async function onFormSubmit(event) {
         console.log(photos);
         
     } catch (error) {
-        console.log(error);
+        return notifyFailure(error);
     }
 }
 
@@ -139,7 +139,7 @@ async function onLoadMore(event) {
         console.log(photos);
         
     } catch (error) {
-        return console.log(error);
+        return notifyFailure(error);
     }
 }
 
@@ -149,6 +149,10 @@ function removeVisuallyHidden(ref) {
 
 function addVisuallyHidden(ref) {
     ref.classList.add('visually-hidden');
+}
+
+function notifyFailure(error) {
+  Notify.failure(`Houston, we have a problem - ${error}`);
 }
 
 // simpleLightbox gallery
