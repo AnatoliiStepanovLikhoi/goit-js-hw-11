@@ -187,8 +187,8 @@ window.addEventListener('scroll', async () => {
     //     await onLoadMore();
     // }
 
-    console.log(window.innerHeight + window.scrollY);
-    console.log(document.body.offsetHeight);
+    // console.log(window.innerHeight + window.scrollY);
+    // console.log(document.body.offsetHeight);
     // console.log(clientHeight);
 
     if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
