@@ -195,7 +195,7 @@ window.addEventListener('scroll', async () => {
     // console.log(document.body.offsetHeight);
     // console.log(clientHeight);
 
-    if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         console.log('last image');
         await onLoadMore();
     }
