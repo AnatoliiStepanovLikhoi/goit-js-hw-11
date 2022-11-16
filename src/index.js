@@ -176,7 +176,7 @@ var lightbox = new SimpleLightbox('.gallery a', {
     disableScroll: true,
 });
 
-window.addEventListener('scroll', async () => {
+window.addEventListener('scroll', () => {
     // if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
     //     // console.log('you are on the bottom');
     // }
@@ -197,7 +197,7 @@ window.addEventListener('scroll', async () => {
 
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         console.log('last image');
-        await onLoadMore();
+        onLoadMore();
     }
 })
 
