@@ -56,7 +56,7 @@ async function onFormSubmit(event) {
 
         Notify.success(`Hooray! We found ${response.data.totalHits} images.`);
 
-        addGalleryMarkup(photos)
+        addGalleryMarkup(photos);
         // infiniteScrollObserver.observe(refs.galleryBox)
 
         if (reqiuiredPhotoQty > response.data.hits.length) {
@@ -116,21 +116,19 @@ function addGalleryMarkup(dataArray) {
     refs.galleryBox.insertAdjacentHTML('beforeend', galleryMarkup);
     // startInfiniteObserver()
     lightbox.refresh()
+    // smoothScroll();
 };
 
 async function onLoadMore(event) {
     try {
-        const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+        
         const response = await fetchPhoto(requstedValue, pageNumber);
         pageNumber += 1
         const photos = await response.data.hits;
 
         addGalleryMarkup(photos);
 
-        window.scrollBy({
-            top: cardHeight * 2,
-            behavior: "smooth",
-        });
+        smoothScroll();
 
         if (reqiuiredPhotoQty > photos.length) {
             Notify.failure("Sorry, there are no more images matching your search query. Please try another request.");
@@ -153,6 +151,15 @@ function addVisuallyHidden(ref) {
 
 function notifyFailure(error) {
   Notify.failure(`Houston, we have a problem - ${error}`);
+}
+
+function smoothScroll() { 
+    const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+    top: cardHeight * 2,
+    behavior: "smooth",
+        });
 }
 
 // simpleLightbox gallery
@@ -195,7 +202,7 @@ window.addEventListener('scroll', () => {
     // console.log(document.body.offsetHeight);
     // console.log(clientHeight);
 
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+    if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
         console.log('last image');
         onLoadMore();
     }
