@@ -57,7 +57,7 @@ async function onFormSubmit(event) {
         Notify.success(`Hooray! We found ${response.data.totalHits} images.`);
 
         addGalleryMarkup(photos);
-        // infiniteScrollObserver.observe(refs.galleryBox)
+        addObserver();
 
         if (reqiuiredPhotoQty > response.data.hits.length) {
             removeVisuallyHidden(refs.endlist)
@@ -114,7 +114,6 @@ function addGalleryMarkup(dataArray) {
 // console.log(galleryMarkup);
 
     refs.galleryBox.insertAdjacentHTML('beforeend', galleryMarkup);
-    // startInfiniteObserver()
     lightbox.refresh()
     // smoothScroll();
 };
@@ -129,6 +128,7 @@ async function onLoadMore(event) {
         addGalleryMarkup(photos);
 
         smoothScroll();
+        addObserver();
 
         if (reqiuiredPhotoQty > photos.length) {
             Notify.failure("Sorry, there are no more images matching your search query. Please try another request.");
@@ -183,47 +183,25 @@ var lightbox = new SimpleLightbox('.gallery a', {
     disableScroll: true,
 });
 
-window.addEventListener('scroll', () => {
-    // if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-    //     // console.log('you are on the bottom');
-    // }
-    // const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-    // console.log(scrollHeight - clientHeight);
-    // console.log(scrollTop);
-    // console.log(clientHeight);
-
-    // if (scrollTop === scrollHeight - clientHeight) {
-    //     console.log('last image');
-    //     await onLoadMore();
-    // }
-
-    // console.log(window.innerHeight + window.scrollY);
-    // console.log(document.body.offsetHeight);
-    // console.log(clientHeight);
-
-    if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
-        console.log('last image');
-        onLoadMore();
-    }
-})
-
 // Intersection observer
 
-// let infiniteScrollObserver = new IntersectionObserver((entries, infiniteScrollObserver) => {
+function addObserver() {
 
-//     entries.forEach(entry => {
-//         if (entry.isIntersecting) {
-//             console.log('last image');
+    let infiniteScrollObserver = new IntersectionObserver(onScrollIntersection, { threshold: 0.1 })
+    
+    infiniteScrollObserver.observe(refs.galleryBox.lastElementChild);
+    
+};
 
-//             onLoadMore()
-//         }
-//         infiniteScrollObserver.unobserve(entry.target)
-//         infiniteScrollObserver.observe(refs.galleryBox.lastElementChild)
-//     })
-// }, {
-//     threshold: 0.1
-// })
+function onScrollIntersection(entries, infiniteScrollObserver) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        infiniteScrollObserver.unobserve(entry.target);
+        console.log('last image');
+        onLoadMore()
+      }
+    });
+}
 
 // function startInfiniteObserver() {
 //     let infiniteScrollObserver = new IntersectionObserver(onScrollIntersection, { threshold: 0.1 });
@@ -241,3 +219,31 @@ window.addEventListener('scroll', () => {
 //       }
 //     });
 //   }
+
+
+// window scroll listener
+
+// window.addEventListener('scroll', () => {
+//     // if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+//     //     // console.log('you are on the bottom');
+//     // }
+//     // const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+
+//     // console.log(scrollHeight - clientHeight);
+//     // console.log(scrollTop);
+//     // console.log(clientHeight);
+
+//     // if (scrollTop === scrollHeight - clientHeight) {
+//     //     console.log('last image');
+//     //     await onLoadMore();
+//     // }
+
+//     // console.log(window.innerHeight + window.scrollY);
+//     // console.log(document.body.offsetHeight);
+//     // console.log(clientHeight);
+
+//     if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
+//         console.log('last image');
+//         onLoadMore();
+//     }
+// });
