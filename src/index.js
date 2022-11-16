@@ -51,13 +51,15 @@ async function onFormSubmit(event) {
         const photos = await response.data.hits;
 
         if (photos.length === 0) {
-             return Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+            return Notify.failure("Sorry, there are no images matching your search query. Please try again.")
         }
 
         Notify.success(`Hooray! We found ${response.data.totalHits} images.`);
 
         addGalleryMarkup(photos);
         addObserver();
+        // event.target.elements.searchQuery.value = '';
+        
 
         if (reqiuiredPhotoQty > response.data.hits.length) {
             removeVisuallyHidden(refs.endlist)
@@ -120,13 +122,11 @@ function addGalleryMarkup(dataArray) {
 
 async function onLoadMore(event) {
     try {
-        
         const response = await fetchPhoto(requstedValue, pageNumber);
         pageNumber += 1
         const photos = await response.data.hits;
 
         addGalleryMarkup(photos);
-
         smoothScroll();
         addObserver();
 
