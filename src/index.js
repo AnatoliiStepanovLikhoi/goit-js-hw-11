@@ -3,6 +3,10 @@ import SimpleLightbox from "simplelightbox";
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import fetchPhoto from "./fetchPhoto";
 
+import NewApiService from './fetchPhoto';
+const createRequest = new NewApiService()
+
+
 Notify.init({
   distance: '20px',
   cssAnimationStyle: 'from-top',
@@ -14,8 +18,8 @@ Notify.init({
   clickToClose: true,
 });
 
-let pageNumber;
-let requstedValue;
+// let pageNumber;
+// let requstedValue;
 let reqiuiredPhotoQty = 40;
 
 
@@ -34,11 +38,17 @@ async function onFormSubmit(event) {
     pageNumber = 1;
     // refs.endlist.classList.add('visually-hidden');
     addVisuallyHidden(refs.endlist);
-    requstedValue = event.target.elements.searchQuery.value.trim();
 
-    console.log(requstedValue);
+    // requstedValue = event.target.elements.searchQuery.value.trim();
+    createRequest.query = event.target.elements.searchQuery.value.trim();
 
-    if (requstedValue === '') {
+    console.log(createRequest.query);
+
+    // if (requstedValue === '') {
+    //     Notify.failure('Error, please fill the request')
+    //     return
+    // }
+    if (createRequest.query === '') {
         Notify.failure('Error, please fill the request')
         return
     }
@@ -46,8 +56,11 @@ async function onFormSubmit(event) {
     removeVisuallyHidden(refs.galleryBox)
 
     try {
-        const response = await fetchPhoto(requstedValue, pageNumber);
-        pageNumber += 1
+        // const response = await fetchPhoto(requstedValue, pageNumber);
+        // pageNumber += 1
+        createRequest.pageReset()
+        const response = await createRequest.createRequest()
+
         const photos = await response.data.hits;
 
         if (photos.length === 0) {
@@ -122,8 +135,10 @@ function addGalleryMarkup(dataArray) {
 
 async function onLoadMore(event) {
     try {
-        const response = await fetchPhoto(requstedValue, pageNumber);
-        pageNumber += 1
+        // const response = await fetchPhoto(requstedValue, pageNumber);
+        // pageNumber += 1
+        const response = await createRequest.createRequest()
+
         const photos = await response.data.hits;
 
         addGalleryMarkup(photos);
@@ -133,6 +148,7 @@ async function onLoadMore(event) {
         if (reqiuiredPhotoQty > photos.length) {
             Notify.failure("Sorry, there are no more images matching your search query. Please try another request.");
             removeVisuallyHidden(refs.endlist)
+            removeObserver()
         }
         console.log(photos);
         
@@ -185,13 +201,19 @@ var lightbox = new SimpleLightbox('.gallery a', {
 
 // Intersection observer
 
+let infiniteScrollObserver = new IntersectionObserver(onScrollIntersection, { threshold: 0.1 })
+
 function addObserver() {
 
-    let infiniteScrollObserver = new IntersectionObserver(onScrollIntersection, { threshold: 0.1 })
-    
     infiniteScrollObserver.observe(refs.galleryBox.lastElementChild);
     
 };
+
+function removeObserver() {
+
+    infiniteScrollObserver.disconnect()
+    
+}
 
 function onScrollIntersection(entries, infiniteScrollObserver) {
     entries.forEach(entry => {
@@ -199,9 +221,12 @@ function onScrollIntersection(entries, infiniteScrollObserver) {
         infiniteScrollObserver.unobserve(entry.target);
         console.log('last image');
         onLoadMore()
-      }
+        }
+        
     });
 }
+
+
 
 // function startInfiniteObserver() {
 //     let infiniteScrollObserver = new IntersectionObserver(onScrollIntersection, { threshold: 0.1 });
@@ -247,3 +272,5 @@ function onScrollIntersection(entries, infiniteScrollObserver) {
 //         onLoadMore();
 //     }
 // });
+
+
